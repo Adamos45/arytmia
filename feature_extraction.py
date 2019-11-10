@@ -17,4 +17,5 @@ def feature_extraction(feature, dataset):
         feature_sample = features_calculation(baseline, annotation, feature)
         features_package.extend(feature_sample)
 
-    pandas.DataFrame(features_package).to_csv("./features/" + feature + str(dataset) + ".csv", index=False, header=False)
+    pandas.DataFrame(features_package).to_csv("./features/" + feature.value + "_" + str(dataset)
+                                              + ".csv", index=False, header=False)

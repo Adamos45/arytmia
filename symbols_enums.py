@@ -20,8 +20,11 @@ def standarize_annotation(symbol):
 
 
 class FeatureNames(enum.Enum):
-    hos = "hos"
-    wavlt = "wavlt"
-    raw = "raw"
+    mvsk = "hos_mvsk"
+    vsk = "hos_vsk"
+    db5 = "db5"
+    db6 = "db6"
+    raw90 = "raw90"
+    raw45 = "raw45"
     diffs = "diffs"
     spect = "spect"

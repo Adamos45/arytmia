@@ -5,13 +5,13 @@ import numpy as np
 def scorer(estimator, X, Y):
     n_classes = 4
     pf_ms = performance_measures(n_classes)
+
+    #In case of knn or mlp:
+    predictions = estimator.predict(X)
+    #In case of SVM:
     # decision_ovo = estimator.decision_function(X)
     # predictions, counter = ovo_voting(decision_ovo, n_classes)
 
-    ts_predictions = estimator.predict(X)
-    predictions = np.array(np.empty(len(ts_predictions)))
-    for i in range(len(ts_predictions)):
-        predictions[i] = np.argmax(ts_predictions[i])
     # Confussion matrix
     conf_mat = metrics.confusion_matrix(Y, predictions, labels=[0, 1, 2, 3])
     conf_mat = conf_mat.astype(float)
@@ -104,33 +104,33 @@ class performance_measures:
         self.Ijk = 0.0
 
 
-def ovo_class_combinations(n_classes):
-    class_pos = []
-    class_neg = []
-    for c1 in range(n_classes - 1):
-        for c2 in range(c1 + 1, n_classes):
-            class_pos.append(c1)
-            class_neg.append(c2)
+# def ovo_class_combinations(n_classes):
+#     class_pos = []
+#     class_neg = []
+#     for c1 in range(n_classes - 1):
+#         for c2 in range(c1 + 1, n_classes):
+#             class_pos.append(c1)
+#             class_neg.append(c2)
+#
+#     return class_pos, class_neg
 
-    return class_pos, class_neg
 
-
-def ovo_voting(decision_ovo, n_classes):
-    predictions = np.zeros(len(decision_ovo))
-    class_pos, class_neg = ovo_class_combinations(n_classes)
-
-    counter = np.zeros([len(decision_ovo), n_classes])
-
-    for p in range(len(decision_ovo)):
-        for i in range(len(decision_ovo[p])):
-            if decision_ovo[p, i] > 0:
-                counter[p, class_pos[i]] += 1
-            else:
-                counter[p, class_neg[i]] += 1
-
-        predictions[p] = np.argmax(counter[p])
-
-    return predictions, counter
+# def ovo_voting(decision_ovo, n_classes):
+#     predictions = np.zeros(len(decision_ovo))
+#     class_pos, class_neg = ovo_class_combinations(n_classes)
+#
+#     counter = np.zeros([len(decision_ovo), n_classes])
+#
+#     for p in range(len(decision_ovo)):
+#         for i in range(len(decision_ovo[p])):
+#             if decision_ovo[p, i] > 0:
+#                 counter[p, class_pos[i]] += 1
+#             else:
+#                 counter[p, class_neg[i]] += 1
+#
+#         predictions[p] = np.argmax(counter[p])
+#
+#     return predictions, counter
 
 
 def compute_cohen_kappa(confusion_matrix):

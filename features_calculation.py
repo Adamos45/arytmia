@@ -10,7 +10,7 @@ def features_calculation(baseline, annotation, feature):
     x = annotation.sample
     y = annotation.symbol
 
-    if feature == FeatureNames.diffs.value:
+    if feature == FeatureNames.diffs:
         diffs = []
         previous_class = 0
         for i in range(len(x) - 1):
@@ -72,35 +72,42 @@ def features_calculation(baseline, annotation, feature):
                 segmented_beats.append([baseline[x[i] - 90:x[i] + 90], standarize_annotation(y[i])])
         segmented_beats.pop(0)
 
-        if feature == FeatureNames.wavlt.value:
+        if feature == FeatureNames.db5 or feature == FeatureNames.db6:
             wavs = []
             for seg in segmented_beats:
-                c = pywt.wavedec(seg[0], 'db10', level=3)
+                c = pywt.wavedec(seg[0], feature.value, level=3)
                 features = np.append(c[0], seg[1])
                 wavs.append(features)
             return wavs
 
-        if feature == FeatureNames.hos.value:
+        if feature == FeatureNames.mvsk or feature == FeatureNames.vsk:
             hos = []
             for seg in segmented_beats:
                 seg = [signal.savgol_filter(seg[0], 7, 2), seg[1]]
-                features = [np.mean(seg[0]), stats.variation(seg[0]),
-                            stats.skew(seg[0]), stats.kurtosis(seg[0]), seg[1]]
+                features = [stats.variation(seg[0]), stats.skew(seg[0]),
+                            stats.kurtosis(seg[0])]
+                if feature == FeatureNames.mvsk:
+                    features.append(np.mean(seg[0]))
+                features.append(seg[1])
                 hos.append(features)
             return hos
 
-        if feature == FeatureNames.raw.value:
+        if feature == FeatureNames.raw90 or feature == FeatureNames.raw45:
+            if feature == FeatureNames.raw90:
+                divider = 2
+            else:
+                divider = 4
             raw = []
             for seg in segmented_beats:
                 features = []
                 for i, s in enumerate(seg[0]):
-                    if i % 2 == 0:
+                    if i % divider == 0:
                         features.append(s)
                 features.append(seg[1])
                 raw.append(features)
             return raw
 
-        if feature == FeatureNames.spect.value:
+        if feature == FeatureNames.spect:
             spect = []
             for i, seg in enumerate(segmented_beats):
                 _, sxx = signal.welch(np.array(seg[0]), 60, nperseg=180)
