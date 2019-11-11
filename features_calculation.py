@@ -66,10 +66,13 @@ def features_calculation(baseline, annotation, feature):
         for i in range(len(x) - 1):
             if standarize_annotation(y[i]) == "unrecognized":
                 continue
+            if len(segmented_beats) > 0 and standarize_annotation(y[i-1]) == "unrecognized":
+                continue
+            class_nr = standarize_annotation(y[i])
             if i == len(x) - 1 or x[i] + 90 >= len(baseline):
-                segmented_beats.append([baseline[x[i] - 90:len(baseline) - 1], standarize_annotation(y[i])])
+                segmented_beats.append([baseline[x[i] - 90:len(baseline) - 1], class_nr])
             else:
-                segmented_beats.append([baseline[x[i] - 90:x[i] + 90], standarize_annotation(y[i])])
+                segmented_beats.append([baseline[x[i] - 90:x[i] + 90], class_nr])
         segmented_beats.pop(0)
 
         if feature == FeatureNames.db5 or feature == FeatureNames.db6:

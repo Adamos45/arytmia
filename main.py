@@ -12,7 +12,9 @@ from sklearn.model_selection import cross_val_score
 from feature_extraction import feature_extraction
 from scoring import scorer
 from symbols_enums import FeatureNames
+from sklearn.ensemble import AdaBoostClassifier
 import joblib
+from logger import logger
 
 
 def prepare_data(files_to_read):
@@ -23,11 +25,11 @@ def prepare_data(files_to_read):
         for file in files_to_read:
             file_name = file.value + "_" + str(i) + ".csv"
             if file_name not in files_in_directory:
-                print("Calculating file " + file_name + "...")
+                logger.debug("Calculating file " + file_name + "...")
                 feature_extraction(file, i)
-                print("finished.")
+                logger.debug("finished.")
             else:
-                print("Found file " + file_name + ".")
+                logger.debug("Found file " + file_name + ".")
 
 
 def feature_selection(x, y):
@@ -45,11 +47,14 @@ def feature_selection(x, y):
 def main():
     files = [FeatureNames.mvsk, FeatureNames.vsk, FeatureNames.db5, FeatureNames.db6,
              FeatureNames.raw90, FeatureNames.raw45, FeatureNames.diffs, FeatureNames.spect]
-    prepare_data(files)
-    print("Reading data")
-    data = read_data(files)
-    print("Finished.")
 
+    prepare_data(files)
+    logger.debug("Reading data")
+    data = read_data(files)
+    logger.debug("Finished.")
+
+    classificator_weights = []
+    predictions = []
 
     for file_number, samples in enumerate(data):
         X_train = samples[0]
@@ -64,18 +69,16 @@ def main():
         # model = DecisionTreeClassifier(class_weight='balanced')
 
         if file_number in [1, 5, 7]:
-            model = KNeighborsClassifier(n_neighbors=7, algorithm='auto')
+            model = KNeighborsClassifier(n_neighbors=10, algorithm='auto')
         else:
             model = MLPClassifier(hidden_layer_sizes=(20, 10, 10), max_iter=200, alpha=0.001,
                                   nesterovs_momentum=True, solver='sgd', verbose=False, tol=0.0001,
                                   learning_rate='adaptive')
 
-        # print(np.mean(cross_val_score(model, X_train, y_train, scoring=scorer, cv=10)))
-
         def train_model(name):
-            print("Training " + files[file_number].value)
+            logger.debug("Training " + files[file_number].value)
             model.fit(X_train, y_train)
-            joblib.dump(model, open("./trained_models/" + name, 'wb'))
+            joblib.dump(model, open("./trained_models/" + name, 'wb+'))
 
         model_name = files[file_number].value+".sav"
         if "trained_models" not in os.listdir("."):
@@ -84,10 +87,22 @@ def main():
         elif model_name not in os.listdir("./trained_models"):
             train_model(model_name)
         else:
-            print("Found " + model_name)
+            logger.debug("Found " + model_name)
             model = joblib.load("./trained_models/" + model_name)
-
-        scorer(model, X_test, y_test)
+        logger.info(files[file_number])
+        score_results = scorer(X_test, y_test, model)
+        classificator_weights.append(score_results[0])
+        predictions.append(score_results[1])
+    ensembled_prediction = []
+    for i in range(len(predictions[0])):
+        votes = np.array(np.zeros(4))
+        for j in range(len(predictions)):
+            v = predictions[j][i]
+            votes[v] += classificator_weights[j]
+        ensembled_prediction.append(np.argmax(votes))
+        votes.fill(0)
+    print("Final score:")
+    print(scorer(Y=data[0][3], ensembled_predction=ensembled_prediction)[0])
 
 
 def read_data(files):

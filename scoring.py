@@ -1,13 +1,17 @@
 import sklearn.metrics as metrics
 import numpy as np
+from logger import logger
 
 
-def scorer(estimator, X, Y):
+def scorer(X=None, Y=None, estimator=None, ensembled_predction=None):
     n_classes = 4
     pf_ms = performance_measures(n_classes)
 
     #In case of knn or mlp:
-    predictions = estimator.predict(X)
+    if ensembled_predction:
+        predictions = ensembled_predction
+    else:
+        predictions = estimator.predict(X)
     #In case of SVM:
     # decision_ovo = estimator.decision_function(X)
     # predictions, counter = ovo_voting(decision_ovo, n_classes)
@@ -49,40 +53,44 @@ def scorer(estimator, X, Y):
     w2 = 0.125
     pf_ms.Ijk = w1 * pf_ms.kappa + w2 * pf_ms.Ij
 
-    print("Ijk: " + str(format(pf_ms.Ijk, '.4f')) + "\n")
-    print("Ij: " + str(format(pf_ms.Ij, '.4f')) + "\n")
-    print("Cohen's Kappa: " + str(format(pf_ms.kappa, '.4f')) + "\n\n")
+    logger.info("Ijk: " + str(format(pf_ms.Ijk, '.4f')) + "\n")
+    logger.info("Ij: " + str(format(pf_ms.Ij, '.4f')) + "\n")
+    logger.info("Cohen's Kappa: " + str(format(pf_ms.kappa, '.4f')) + "\n\n")
     # Conf matrix
-    print("Confusion Matrix:" + "\n\n")
-    print("\n".join(str(elem) for elem in pf_ms.confusion_matrix.astype(int)) + "\n\n")
+    logger.info("Confusion Matrix:" + "\n\n")
+    logger.info("\n".join(str(elem) for elem in pf_ms.confusion_matrix.astype(int)) + "\n\n")
 
-    print("Overall ACC: " + str(format(pf_ms.Overall_Acc, '.4f')) + "\n\n")
+    logger.info("Overall ACC: " + str(format(pf_ms.Overall_Acc, '.4f')) + "\n\n")
 
-    print("mean Acc: " + str(format(np.average(pf_ms.Acc[:]), '.4f')) + "\n")
-    print("mean Recall: " + str(format(np.average(pf_ms.Recall[:]), '.4f')) + "\n")
-    print("mean Precision: " + str(format(np.average(pf_ms.Precision[:]), '.4f')) + "\n")
+    logger.info("mean Acc: " + str(format(np.average(pf_ms.Acc[:]), '.4f')) + "\n")
+    logger.info("mean Recall: " + str(format(np.average(pf_ms.Recall[:]), '.4f')) + "\n")
+    logger.info("mean Precision: " + str(format(np.average(pf_ms.Precision[:]), '.4f')) + "\n")
 
-    print("N:" + "\n\n")
-    print("Sens: " + str(format(pf_ms.Recall[0], '.4f')) + "\n")
-    print("Prec: " + str(format(pf_ms.Precision[0], '.4f')) + "\n")
-    print("Acc: " + str(format(pf_ms.Acc[0], '.4f')) + "\n")
+    logger.info("N:" + "\n\n")
+    logger.info("Sens: " + str(format(pf_ms.Recall[0], '.4f')) + "\n")
+    logger.info("Prec: " + str(format(pf_ms.Precision[0], '.4f')) + "\n")
+    logger.info("Acc: " + str(format(pf_ms.Acc[0], '.4f')) + "\n")
+    logger.info("F-score: " + str(format(pf_ms.F_measure[0], '.4f')) + "\n")
 
-    print("SVEB:" + "\n\n")
-    print("Sens: " + str(format(pf_ms.Recall[1], '.4f')) + "\n")
-    print("Prec: " + str(format(pf_ms.Precision[1], '.4f')) + "\n")
-    print("Acc: " + str(format(pf_ms.Acc[1], '.4f')) + "\n")
+    logger.info("SVEB:" + "\n\n")
+    logger.info("Sens: " + str(format(pf_ms.Recall[1], '.4f')) + "\n")
+    logger.info("Prec: " + str(format(pf_ms.Precision[1], '.4f')) + "\n")
+    logger.info("Acc: " + str(format(pf_ms.Acc[1], '.4f')) + "\n")
+    logger.info("F-score: " + str(format(pf_ms.F_measure[1], '.4f')) + "\n")
 
-    print("VEB:" + "\n\n")
-    print("Sens: " + str(format(pf_ms.Recall[2], '.4f')) + "\n")
-    print("Prec: " + str(format(pf_ms.Precision[2], '.4f')) + "\n")
-    print("Acc: " + str(format(pf_ms.Acc[2], '.4f')) + "\n")
+    logger.info("VEB:" + "\n\n")
+    logger.info("Sens: " + str(format(pf_ms.Recall[2], '.4f')) + "\n")
+    logger.info("Prec: " + str(format(pf_ms.Precision[2], '.4f')) + "\n")
+    logger.info("Acc: " + str(format(pf_ms.Acc[2], '.4f')) + "\n")
+    logger.info("F-score: " + str(format(pf_ms.F_measure[2], '.4f')) + "\n")
 
-    print("F:" + "\n\n")
-    print("Sens: " + str(format(pf_ms.Recall[3], '.4f')) + "\n")
-    print("Prec: " + str(format(pf_ms.Precision[3], '.4f')) + "\n")
-    print("Acc: " + str(format(pf_ms.Acc[3], '.4f')) + "\n")
+    logger.info("F:" + "\n\n")
+    logger.info("Sens: " + str(format(pf_ms.Recall[3], '.4f')) + "\n")
+    logger.info("Prec: " + str(format(pf_ms.Precision[3], '.4f')) + "\n")
+    logger.info("Acc: " + str(format(pf_ms.Acc[3], '.4f')) + "\n")
+    logger.info("F-score: " + str(format(pf_ms.F_measure[3], '.4f')) + "\n")
 
-    return pf_ms.Ijk
+    return pf_ms.Ijk, predictions
 
 
 class performance_measures:
