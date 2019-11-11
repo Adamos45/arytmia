@@ -9,9 +9,9 @@ class Logger:
 
         # Create handlers
         c_handler = logging.StreamHandler()
-        f_handler = logging.FileHandler('logs.log', 'w+')
+        f_handler = logging.FileHandler('logs.log', 'a+')
         c_handler.setLevel(logging.DEBUG)
-        f_handler.setLevel(logging.INFO)
+        f_handler.setLevel(logging.DEBUG)
 
         # Create formatters and add it to handlers
         c_format = logging.Formatter('%(message)s')
