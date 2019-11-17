@@ -87,8 +87,10 @@ def features_calculation(baseline, annotation, feature):
             hos = []
             for seg in segmented_beats:
                 seg = [signal.savgol_filter(seg[0], 7, 2), seg[1]]
-                features = [np.mean(seg[0]), stats.variation(seg[0]), stats.skew(seg[0]),
+                features = [stats.variation(seg[0]), stats.skew(seg[0]),
                             stats.kurtosis(seg[0])]
+                if feature == FeatureNames.mvsk:
+                    features.append(np.mean(seg[0]))
                 features.append(seg[1])
                 hos.append(features)
             return hos
