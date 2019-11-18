@@ -71,6 +71,5 @@ def main():
     btn2.pack()
     tk.mainloop()
 
-
 if __name__ == "__main__":
     main()
