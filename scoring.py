@@ -3,15 +3,22 @@ import numpy as np
 from logger import logger
 
 
-def scorer(X=None, Y=None, estimator=None, ensembled_predction=None):
+def scorer(X=None, Y=None, estimator=None, ensembled_predction=None, diffs=False):
     n_classes = 4
     pf_ms = performance_measures(n_classes)
 
     #In case of knn or mlp:
     if ensembled_predction:
         predictions = ensembled_predction
-    else:
+    elif not diffs:
         predictions = np.array(estimator.predict_proba(X))
+    else:
+        previous_class = 0
+        for it, sample in enumerate(X):
+            X[it][len(sample)-1] = previous_class
+            previous_class = estimator.predict([sample])
+        predictions = np.array(estimator.predict_proba(X))
+
 
     # Confussion matrix
     if ensembled_predction:

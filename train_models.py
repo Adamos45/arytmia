@@ -40,7 +40,7 @@ def train_models(data, files):
             logger.debug("Found " + model_name)
             model = joblib.load("./trained_models/" + model_name)
         logger.info(files[file_number])
-        score_results = scorer(X_test, y_test, model)
+        score_results = scorer(X_test, estimator=model)
         predictions.append(score_results)
     ensembled_prediction = []
     for i in range(len(predictions[0])):
@@ -52,4 +52,4 @@ def train_models(data, files):
         for p in range(len(products)):
             products[p] = np.product(voting[p])
         ensembled_prediction.append(np.argmax(products))
-    scorer(Y=data[0][3], ensembled_predction=ensembled_prediction)
+    scorer(Y=data[0][3], ensembled_predction=ensembled_prediction, diffs=True)

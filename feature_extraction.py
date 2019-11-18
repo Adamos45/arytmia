@@ -25,27 +25,30 @@ def feature_extraction(feature, dataset):
                                               + ".csv", index=False, header=False)
 
 
-def read_data(files):
+def read_data(files, for_gui=False):
     store = []
 
     for file in files:
         logger.info("Reading" + str(file))
-        train_features_vector = []
+        train_features = []
         train_label = []
-        test_features_vector = []
+        test_features = []
         test_label = []
         scaler = StandardScaler()
         for i in range(1, 3):
-            data = pandas.read_csv("./features/" + file.value + "_" + str(i) + ".csv")
+            if not for_gui:
+                data = pandas.read_csv("./features/" + file.value + "_" + str(i) + ".csv")
+            else:
+                data = pandas.read_csv(files)
             data = data.values
             if i == 1:
-                test_features_vector = scaler.fit_transform(data[:, 0:(len(data[0]) - 1)].astype(np.float64))
+                test_features = scaler.fit_transform(data[:, 0:(len(data[0]) - 1)].astype(np.float64))
                 test_label = data[:, len(data[0]) - 1].astype(np.float).astype(np.int)
             else:
-                train_features_vector = scaler.fit_transform(data[:, 0:(len(data[0]) - 1)].astype(np.float64))
+                train_features = scaler.fit_transform(data[:, 0:(len(data[0]) - 1)].astype(np.float64))
                 train_label = data[:, len(data[0]) - 1].astype(np.float).astype(np.int)
 
-        store.append([train_features_vector, train_label, test_features_vector, test_label])
+        store.append([train_features, train_label, test_features, test_label])
 
     return store
 
