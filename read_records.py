@@ -16,7 +16,7 @@ def read_records(record_choice, dataset_choice):
     record = wfdb.rdrecord('mitdb/' + record_nr, channels=[channel_nr])
     annotation = wfdb.rdann('mitdb/' + record_nr, 'atr', shift_samps=True)
 
-    wfdb.plot_wfdb(record, annotation=annotation, title='Record ' + record_nr + ' from MIT-BIH Arrhythmia Database',
-                 figsize=(10, 4), time_units="samples", plot_sym=True)  # plot loaded singal
+    # wfdb.plot_wfdb(record, annotation=annotation, title='Record ' + record_nr + ' from MIT-BIH Arrhythmia Database',
+    #              figsize=(10, 4), time_units="samples", plot_sym=True)  # plot loaded singal
 
     return record, annotation

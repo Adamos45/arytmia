@@ -18,7 +18,7 @@ def train_models(data, files):
         X_test = samples[2]
         y_test = samples[3]
 
-        if files[file_number] in [FeatureNames.vsk, FeatureNames.raw45, FeatureNames.spect]:
+        if files[file_number] in [FeatureNames.hos_vsk, FeatureNames.raw45, FeatureNames.spect]:
             model = KNeighborsClassifier(n_neighbors=7, algorithm='auto')
         else:
             model = MLPClassifier(hidden_layer_sizes=(20, 10, 10), max_iter=200, alpha=0.001,

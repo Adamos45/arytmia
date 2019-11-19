@@ -20,8 +20,8 @@ def standarize_annotation(symbol):
 
 
 class FeatureNames(enum.Enum):
-    mvsk = "hos_mvsk"
-    vsk = "hos_vsk"
+    hos_mvsk = "hos_mvsk"
+    hos_vsk = "hos_vsk"
     db5 = "db5"
     db6 = "db6"
     raw90 = "raw90"

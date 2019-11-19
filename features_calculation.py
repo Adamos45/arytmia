@@ -101,7 +101,7 @@ def features_calculation(baseline, annotation, feature, for_gui=False):
                 wavs.append(features)
             return np.array(wavs)
 
-        if feature == FeatureNames.mvsk or feature == FeatureNames.vsk:
+        if feature == FeatureNames.hos_mvsk or feature == FeatureNames.hos_vsk:
             hos = []
             for seg in segmented_beats:
                 if not for_gui:
@@ -110,7 +110,7 @@ def features_calculation(baseline, annotation, feature, for_gui=False):
                     seg = [signal.savgol_filter(seg[0], 7, 2)]
                 features = [stats.variation(seg[0]), stats.skew(seg[0]),
                             stats.kurtosis(seg[0])]
-                if feature == FeatureNames.mvsk:
+                if feature == FeatureNames.hos_mvsk:
                     features.append(np.mean(seg[0]))
                 if not for_gui:
                     features.append(seg[1])
@@ -140,6 +140,6 @@ def features_calculation(baseline, annotation, feature, for_gui=False):
                 if not for_gui:
                     features = np.append(sxx, seg[1])
                 else:
-                    features = np.append(sxx)
+                    features = sxx
                 spect.append(features)
             return np.array(spect)
